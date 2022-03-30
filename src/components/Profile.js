@@ -10,8 +10,8 @@ const Profile = () => {
     return <Link to="/login" />;
   }
   return (
-    <div className="container">
-      <header className="jumbotron">
+    <div>
+      <header>
         <h3>
           <strong>{currentUser.username}</strong> Profile
         </h3>
