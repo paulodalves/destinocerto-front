@@ -1,33 +1,44 @@
-import React from "react";
-import { Link } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import React from "react"
+import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+
+import { Card } from '@nextui-org/react';
+
 
 const Profile = () => {
-    
-  const { user: currentUser } = useSelector((state) => state.auth);
+  const { user: currentUser } = useSelector((state) => state.auth)
   console.log(currentUser)
   if (!currentUser) {
-    return <Link to="/login" />;
+    return <Link to="/login" />
   }
   return (
-    <div>
-      <header>
-        <h3>
-          <strong>{currentUser.username}</strong> Profile
-        </h3>
-      </header>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+      }}
+    >
+    <Card bordered shadow={false} css={{ mw: "400px" }}>
+      <h3>Perfil</h3>
       <p>
-        <strong>Id:</strong> {currentUser.id}
+        <strong>Nome de Usuário:</strong> {currentUser.username}
       </p>
       <p>
-        <strong>Email:</strong> {currentUser.email}
+        <strong>Nome:</strong> {currentUser.nome}{" "}{currentUser.sobrenome}
       </p>
-      <strong>Authorities:</strong>
-      <ul>
-        {currentUser.roles &&
-          currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-      </ul>
+      <p>
+        <strong>Telefone:</strong> {currentUser.telelefone}
+      </p>
+      <p>
+        <strong>CPF:</strong> {currentUser.cpf}
+      </p>
+      <p>
+        <strong>E-mail:</strong> {currentUser.email}
+      </p>
+    </Card>
     </div>
-  );
-};
-export default Profile;
+  )
+}
+export default Profile

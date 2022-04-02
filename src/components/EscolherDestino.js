@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 
 import ViagemDataService from "../services/viagemservice";
 import DestinoDataService from "../services/destino.service";
-import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 const EscolherDestino = () => {
@@ -86,11 +85,6 @@ const EscolherDestino = () => {
 
   return (
     <div>
-      <Container
-        style={{ height: "100%" }}
-        className="container-padd"
-        fluid="sm"
-      >
         <h1 className="h1-centraliza">Destino de viagem</h1>
         <div className="local-info">
           <div className="local-info-fundo-cor">
@@ -133,7 +127,6 @@ const EscolherDestino = () => {
             </div>
           </div>
         )}
-      </Container>
     </div>
   );
 };

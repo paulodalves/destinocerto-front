@@ -3,6 +3,8 @@ import { useSelector } from "react-redux"
 
 import ViagemDataService from "../services/viagemservice"
 
+import { Table } from "@nextui-org/react"
+
 const MinhasViagens = () => {
   const { user: currentUser } = useSelector((state) => state.auth)
 
@@ -25,24 +27,28 @@ const MinhasViagens = () => {
 
   return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Destino</th>
-            <th>Data da Viagem</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table
+        aria-label="Tabela com conteúdo dinámico"
+        css={{
+          height: "auto",
+          minWidth: "100%",
+        }}
+      >
+        <Table.Header columns={viagens}>
+          <Table.Column>Nome</Table.Column>
+          <Table.Column>Destino</Table.Column>
+          <Table.Column>Data da Viagem</Table.Column>
+        </Table.Header>
+        <Table.Body>
           {viagens.map((viagem, index) => (
-          <tr key={index}>
-            <td>{viagem.nomecompleto}</td>
-            <td>{viagem.nome}</td>
-            <td>{viagem.dataviagem}</td>
-          </tr>
+            <Table.Row key={index}>
+              <Table.Cell>{viagem.nomecompleto}</Table.Cell>
+              <Table.Cell>{viagem.nome}</Table.Cell>
+              <Table.Cell>{viagem.dataviagem}</Table.Cell>
+            </Table.Row>
           ))}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table>
     </>
   )
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Route, Link, Routes } from "react-router-dom"
-import "bootstrap/dist/css/bootstrap.min.css"
+import { Link, Route, Routes } from "react-router-dom"
 import "./App.css"
 import Login from "./components/Login"
 import Register from "./components/Register"
@@ -14,10 +13,13 @@ import ListarDestinos from "./components/ListarDestinos"
 import Destino from "./components/Destino"
 import EscolherDestino from "./components/EscolherDestino"
 import MinhasViagens from "./components/MinhasViagens"
+import { Nav, Navbar } from "react-bootstrap"
+
+import { Container } from "@nextui-org/react"
 
 const App = () => {
   const { user: currentUser } = useSelector((state) => state.auth)
-  const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [showAdminBoard, setShowAdminBoard] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -27,9 +29,9 @@ const App = () => {
 
   useEffect(() => {
     if (currentUser) {
-      setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+      setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"))
     }
-  }, [currentUser]);
+  }, [currentUser])
 
   useEffect(() => {
     EventBus.on("logout", () => {
@@ -42,81 +44,40 @@ const App = () => {
 
   return (
     <div>
-      <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/"} className="navbar-brand">
-          Destino Certo
-        </Link>
-        <div className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <Link to={"/home"} className="nav-link">
-              Home
-            </Link>
-          </li>
-          {showAdminBoard && (
-          <div className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link to={"/criardestino"} className="nav-link">
-                Cadastrar Destino
-              </Link>
-            </li>
-          </div>
-          )}
-          <div className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link to={"/listardestinos"} className="nav-link">
-                Destinos
-              </Link>
-            </li>
-          </div>
+      <Navbar collapseOnSelect expand="lg" variant="light">
+        <Link to="/">Destino Certo</Link>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Link to="/home">Home</Link>
+            {showAdminBoard && (
+              <Link to={"/criardestino"}>Cadastrar Destino</Link>
+            )}
+            <Link to="/listardestinos">Destinos</Link>
+            {currentUser && <Link to="/minhasviagens">Minhas viagens</Link>}
+            {currentUser && <Link to="/profile">Perfil</Link>}
+          </Nav>
 
-          {currentUser && (
-            <div className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <Link to={"/minhasviagens"} className="nav-link">
-                  Minhas Viagens
-                </Link>
-              </li>
-            </div>
-          )}
-          {currentUser && (
-            <li className="nav-item">
-              <Link to={"/profile"} className="nav-link">
-                Perfil
-              </Link>
-            </li>
-          )}
-        </div>
-        {currentUser ? (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/profile"} className="nav-link">
-                {currentUser.username}
-              </Link>
-            </li>
-            <li className="nav-item">
-              <a href="/login" className="nav-link" onClick={logOut}>
+          {currentUser ? (
+            <Nav>
+              <Link to="/profile">{currentUser.username}</Link>
+              <Link to="/login" onClick={logOut}>
                 Sair
-              </a>
-            </li>
-          </div>
-        ) : (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/login"} className="nav-link">
-                Login
               </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/register"} className="nav-link">
-                Cadastrar
+            </Nav>
+          ) : (
+            <Nav>
+              <Link to="/login">Login</Link>
+              <Link to="/register" onClick={logOut}>
+                Registrar
               </Link>
-            </li>
-          </div>
-        )}
-      </nav>
-      <div>
+            </Nav>
+          )}
+        </Navbar.Collapse>
+      </Navbar>
+      <Container style={{height: "100vh"}}>
         <Routes>
-          <Route path={"/"} element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/criardestino" element={<CriarDestino />} />
           <Route path="/destino/:id/" element={<Destino />} />
@@ -126,8 +87,16 @@ const App = () => {
           <Route path="/minhasviagens" element={<MinhasViagens />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route
+            path="*"
+            element={
+              <main style={{ padding: "1rem" }}>
+                <p>There's nothing here!</p>
+              </main>
+            }
+          />
         </Routes>
-      </div>
+      </Container>
     </div>
   )
 }

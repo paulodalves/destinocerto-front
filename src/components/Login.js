@@ -1,100 +1,106 @@
-import React, { useState, useEffect  } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { login } from "../slices/auth";
-import { clearMessage } from "../slices/message";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as Yup from "yup"
+import { login } from "../slices/auth"
+import { clearMessage } from "../slices/message"
+import { Link } from "react-router-dom"
+import { Button, Card, Loading, Spacer } from "@nextui-org/react"
 
-const Login = (props) => {
+import { useNavigate } from "react-router-dom"
 
-  const [loading, setLoading] = useState(false);
-  const { isLoggedIn } = useSelector((state) => state.auth);
-  const { message } = useSelector((state) => state.message);
+import { Input } from "@nextui-org/react"
 
-  const dispatch = useDispatch();
+import { useForm } from "react-hook-form"
+
+const Login = () => {
+  let navigate = useNavigate()
+
+  const validationSchema = Yup.object({
+    username: Yup.string().required("Campo obrigatório"),
+    password: Yup.string()
+      .required("Campo obrigatório")
+      .min(6, "Mínimo de 6 caracteres"),
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  })
+
+  const [loading, setLoading] = useState(false)
+  const { isLoggedIn } = useSelector((state) => state.auth)
+  const { message } = useSelector((state) => state.message)
+
+  const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(clearMessage());
-  }, [dispatch]);
-
-  const initialValues = {
-    username: "",
-    password: "",
-  };
-  const validationSchema = Yup.object().shape({
-    username: Yup.string().required("This field is required!"),
-    password: Yup.string().required("This field is required!"),
-  });
+    dispatch(clearMessage())
+  }, [dispatch])
 
   const handleLogin = (formValue) => {
-    const { username, password } = formValue;
-    setLoading(true);
+    const { username, password } = formValue
+    setLoading(true)
     dispatch(login({ username, password }))
       .unwrap()
       .then(() => {
-        props.history.push("/profile");
-        window.location.reload();
+        navigate("/home")
       })
       .catch(() => {
-        setLoading(false);
-      });
-  };
+        setLoading(false)
+      })
+  }
 
   if (isLoggedIn) {
-    return <Link to="/profile" />;
+    return <Link to="/profile" />
   }
-  
+
   return (
-    <div className="col-md-12 login-form">
-      <div className="card card-container">
-        <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          alt="profile-img"
-          className="profile-img-card"
-        />
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleLogin}
-        >
-          <Form>
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <Field name="username" type="text" className="form-control" />
-              <ErrorMessage
-                name="username"
-                component="div"
-                className="alert alert-danger"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <Field name="password" type="password" className="form-control" />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="alert alert-danger"
-              />
-            </div>
-            <div className="form-group">
-              <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                {loading && (
-                  <span className="spinner-border spinner-border-sm"></span>
-                )}
-                <span>Login</span>
-              </button>
-            </div>
-          </Form>
-        </Formik>
-      </div>
-      {message && (
-        <div className="form-group">
-          <div className="alert alert-danger" role="alert">
-            {message}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+      }}
+    >
+      <Card css={{ mw: "220px" }} bordered shadow={false}>
+        <form onSubmit={handleSubmit(handleLogin)}>
+          <Input
+            label="Usuário"
+            {...register("username")}
+            type="text"
+          />
+          <p>
+            <small>{errors.username?.message}</small>
+          </p>
+          <Spacer y={1.0} />
+          <Input label="Senha" {...register("password")} type="password" />
+          <p>
+            <small>{errors.password?.message}</small>
+          </p>
+          <div style={{display:"flex", justifyContent:"center"}}>
+          <Button type="submit" disabled={loading} size="sm">
+            {loading && <Loading color="success" size="xs" />}
+            <span>Login</span>
+          </Button>
           </div>
-        </div>
-      )}
+        </form>
+        {message && (
+          <div className="form-group">
+            <div className="alert alert-danger" role="alert">
+              {message}
+            </div>
+          </div>
+        )}
+      </Card>
     </div>
-  );
-};
-export default Login;
+  )
+}
+export default Login

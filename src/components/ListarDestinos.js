@@ -3,6 +3,7 @@ import DestinoDataService from "../services/destino.service"
 import { Link } from "react-router-dom"
 import { useSelector } from "react-redux"
 
+
 const ListarDestinos = () => {
   const { user: currentUser } = useSelector((state) => state.auth)
   const [showAdminBoard, setShowAdminBoard] = useState(false)
